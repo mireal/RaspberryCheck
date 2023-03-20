@@ -3,9 +3,11 @@ import subprocess
 import paramiko
 from config import hostname, port, username, password, scriptdir
 
+toaster = ToastNotifier()
+
+
 # SSH connection
 def check_script():
-
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(hostname=hostname, port=port, username=username, password=password)
@@ -17,12 +19,11 @@ def check_script():
     return output
 
 
-toaster = ToastNotifier()
+# Ping RPi
 response = subprocess.Popen(["ping", "-n", "2", "-w", "500", hostname], stdout=subprocess.PIPE).stdout.read().decode(
     "cp866")
 
 # print(response)
-
 
 
 if "Приблизительное время приема-передачи" in response:
@@ -38,6 +39,3 @@ if "Приблизительное время приема-передачи" in 
 
 else:
     toaster.show_toast("RPi is not responding!", "Something Wrong", duration=60)
-
-
-
